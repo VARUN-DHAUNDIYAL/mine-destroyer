@@ -1,0 +1,39 @@
+name: Build libhackrf.dll on Windows
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+
+      - name: Install vcpkg
+        run: |
+          git clone https://github.com/microsoft/vcpkg.git
+          .\vcpkg\bootstrap-vcpkg.bat
+
+      - name: Install dependencies via vcpkg
+        run: |
+          .\vcpkg\vcpkg.exe install libusb:x64-windows pthreads
+
+      - name: Configure build with CMake
+        run: |
+          mkdir host\build
+          cd host\build
+          cmake .. -DCMAKE_TOOLCHAIN_FILE=..\..\vcpkg\scripts\buildsystems\vcpkg.cmake -DCMAKE_BUILD_TYPE=Release -A x64
+
+      - name: Build libhackrf.dll
+        run: |
+          cmake --build . --config Release --target libhackrf
+
+      - name: Upload DLL artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: libhackrf-windows-dll
+          path: host/build/libhackrf/Release/libhackrf.dll

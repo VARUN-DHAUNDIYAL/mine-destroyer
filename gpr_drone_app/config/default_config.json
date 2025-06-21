@@ -1,0 +1,9 @@
+{
+  "field_length_m": 10,
+  "field_breadth_m": 10,
+  "grid_resolution_m": 1,
+  "frequency_mode": "sweep",
+  "frequency_hz": 3200000000,
+  "sample_rate": 20000000,
+  "duration_ms": 100
+} 
