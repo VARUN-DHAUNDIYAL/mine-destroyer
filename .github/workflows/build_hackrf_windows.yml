@@ -17,21 +17,25 @@ jobs:
         run: |
           git clone https://github.com/microsoft/vcpkg.git
           .\vcpkg\bootstrap-vcpkg.bat
+        shell: powershell
 
       - name: Install dependencies via vcpkg
         run: |
-          .\vcpkg\vcpkg.exe install libusb:x64-windows pthreads
+          .\vcpkg\vcpkg.exe install libusb:x64-windows pthreads:x64-windows
+        shell: powershell
 
       - name: Configure build with CMake
         run: |
           mkdir hackrf\host\build
           cd hackrf\host\build
-          cmake .. -DCMAKE_TOOLCHAIN_FILE=D:/a/mine-destroyer/mine-destroyer/vcpkg/scripts/buildsystems/vcpkg.cmake -DCMAKE_BUILD_TYPE=Release -A x64
+          cmake .. -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}\vcpkg\scripts\buildsystems\vcpkg.cmake -DVCPKG_TARGET_TRIPLET=x64-windows -DCMAKE_BUILD_TYPE=Release -A x64
+        shell: powershell
 
       - name: Build libhackrf.dll
         run: |
           cd hackrf\host\build
           cmake --build . --config Release --target libhackrf
+        shell: powershell
 
       - name: Upload DLL artifact
         uses: actions/upload-artifact@v4
