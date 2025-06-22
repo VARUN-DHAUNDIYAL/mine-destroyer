@@ -24,18 +24,19 @@ jobs:
 
       - name: Configure build with CMake
         run: |
-          mkdir host\build
-          cd host\build
-          cmake .. -DCMAKE_TOOLCHAIN_FILE=..\..\vcpkg\scripts\buildsystems\vcpkg.cmake -DCMAKE_BUILD_TYPE=Release -A x64
+          mkdir hackrf\host\build
+          cd hackrf\host\build
+          cmake .. -DCMAKE_TOOLCHAIN_FILE=..\..\..\vcpkg\scripts\buildsystems\vcpkg.cmake -DCMAKE_BUILD_TYPE=Release -A x64
 
       - name: Build libhackrf.dll
         run: |
+          cd hackrf\host\build
           cmake --build . --config Release --target libhackrf
 
       - name: Upload DLL artifact
         uses: actions/upload-artifact@v4
         with:
           name: libhackrf-windows-dll
-          path: host/build/libhackrf/Release/libhackrf.dll
+          path: hackrf/host/build/libhackrf/Release/libhackrf.dll
           compression-level: 6
           retention-days: 7
